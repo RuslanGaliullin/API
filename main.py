@@ -46,6 +46,26 @@ class Helper:
 helpp = Helper()
 
 
+def translater(bot, updater):
+    accompanying_text = \
+        "Переведено сервисом «Яндекс.Переводчик» http://translate.yandex.ru/."
+    translator_uri = \
+        "https://translate.yandex.net/api/v1.5/tr.json/translate"
+    response = requests.get(
+        translator_uri,
+        params={
+            "key":
+            # Ключ, который надо получить по ссылке в тексте.
+                "{YOUR_KEY_RECIEVED}",
+            # Направление перевода: с русского на английский.
+            "lang": "ru-en",
+            # То, что нужно перевести.
+            "text": updater.message.text
+        })
+    updater.message.reply_text(
+        "\n\n".join([response.json()["text"][0], accompanying_text]))
+
+
 def start(bot, update, city):
     # погода
     api_weather = 'https://api.weather.yandex.ru/v1/informers?'
