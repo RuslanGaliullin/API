@@ -2,7 +2,7 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, Conve
 
 
 def echo(bot, update):
-    update.message.reply_text('Привет, это телешоу. Для начала игры напишите /start_cities')
+    update.message.reply_text('Привет, это телешоу. Для начала игры напишите /start_game_cities')
 
 
 class Cities:
