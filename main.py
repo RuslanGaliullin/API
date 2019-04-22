@@ -7,6 +7,7 @@ def echo(bot, update):
 
 class Cities:
     def start(bot, update):
+        Sights().end()
         update.message.reply_text(
             "Привет. Пройдите небольшой опрос, пожалуйста!\n"
             "Вы можете прервать опрос, послав команду /stop.\n"
@@ -123,6 +124,7 @@ class Cities:
 
 class Sights:
     def start(bot, update):
+        Cities().end()
         update.message.reply_text(
             "Привет. Пройдите небольшой опрос, пожалуйста!\n"
             "Вы можете прервать опрос, послав команду /stop.\n"
