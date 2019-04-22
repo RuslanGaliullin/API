@@ -58,7 +58,7 @@ helpp = Helper()
 
 def start(bot, update, city):
     # погода
-    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
+    api_weather = 'https://api.weather.yandex.ru/v1/informers'
     cords = helpp.get_coords(city).split()
     params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
     response = requests.get(api_weather, params=params)
@@ -68,12 +68,12 @@ def start(bot, update, city):
 
 def dice(bot, update, phrase, lang):
     # переводчик
-    api_translation = 'https://translate.yandex.net/api/v1.5/tr.json/translate?'
+    api_translation = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
     params = {'key': 'trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda',
               'text': phrase, 'lang': helpp.get_language(lang)+'_'+helpp.get_language(lang).upper()}
     response = requests.get(api_translation, params=params)
-    update.message.reply_text("Вы выбрали dice.",
-                              reply_markup=markup_dice)
+    update.message.reply_text(
+        "\n\n".join([response.json()["text"][0]]))
 
 
 def RollOneDie(bot, update):
