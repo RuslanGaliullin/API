@@ -34,10 +34,10 @@ class Helper:
     def get_language(self, lang):
         alll = {'английский': 'en', 'русский': 'ru', 'абхазский': 'ab', 'арабский'
         : 'ar', 'азербайджанский': 'az', 'армянский': 'hy', 'башкирский': 'ba', 'белорусский': 'be',
-               'болгарский': 'bg',
-               'венгерский': 'hu', 'вьетнамский': 'vi', 'грузинский': 'ka', 'датский': 'da', 'иврит': 'he',
-               'испанский': 'es', 'итальянский': 'it', 'немецкий': 'de', 'корейский': 'ko', 'японский': 'ja',
-               'португальский': 'pt'}
+                'болгарский': 'bg',
+                'венгерский': 'hu', 'вьетнамский': 'vi', 'грузинский': 'ka', 'датский': 'da', 'иврит': 'he',
+                'испанский': 'es', 'итальянский': 'it', 'немецкий': 'de', 'корейский': 'ko', 'японский': 'ja',
+                'португальский': 'pt'}
         if lang in alll.keys():
             return all[lang]
         return 'Я не знаю такой язык'
@@ -67,13 +67,7 @@ def translater(bot, updater):
 
 
 def start(bot, update, city):
-    # погода
-    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
-    cords = helpp.get_coords(city).split()
-    params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
-    response = requests.get(api_weather, params=params)
-    update.message.reply_text("Я Бот-помощник для ДЭБИЛ. Что вам нужно?",
-                              reply_markup=markup)
+    pass
 
 
 def zontik(bot, update):
@@ -85,7 +79,14 @@ def perevod(bot, update):
 
 
 def pogoda(bot, update):
-    pass
+    # погода
+    city = update.message.text
+    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
+    cords = helpp.get_coords(city).split()
+    params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
+    response = requests.get(api_weather, params=params)
+    update.message.reply_text("Я Бот-помощник для ДЭБИЛ. Что вам нужно?",
+                              reply_markup=markup)
 
 
 def kartinka(bot, update):
