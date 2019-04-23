@@ -1,346 +1,120 @@
-from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
+# Импортируем необходимые классы.
+from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+import random
+
+reply_keyboard = [['/dice'],
+                  ['/timer']]
+markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
+
+reply_keyboard_dice = [['/RollOneDie', '/RollTwoDie'],
+                       ['/RollMegaDie', '/back']]
+markup_dice = ReplyKeyboardMarkup(reply_keyboard_dice, one_time_keyboard=False)
+
+reply_keyboard_timer = [['/30sec', '/minute'],
+                        ['/5min', '/back']]
+markup_timer = ReplyKeyboardMarkup(reply_keyboard_timer, one_time_keyboard=False)
+
+reply_keyboard_close = [['/close']]
+markup_close = ReplyKeyboardMarkup(reply_keyboard_close, one_time_keyboard=False)
 
 
-class Cities:
-    def start(bot, update):
-        Sights().end()
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 1
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def first_response(bot, update):
-        # Это ответ на первый вопрос.
-        # Мы можем использовать его во втором вопросе.
-        locality = update.message.text
-        print(locality)
-        update.message.reply_text(
-            "Какая погода в городе {locality}?".format(**locals()))
-        # Следующее текстовое сообщение
-        # будет обработано обработчиком states[2]
-        return 2
-
-    def second_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 3
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def third_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 4
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def fourth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 5
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def fivth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 6
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def sixth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 7
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def seventh_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 8
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def eighth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 9
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def ninth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 10
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def tenth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
-
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 1
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
-
-    def stop(bot, update):
-        update.message.reply_text(
-            "Жаль. А было бы интерсно пообщаться. Всего доброго!")
-        return ConversationHandler.END  # Константа, означающая конец диалога
-
-    def end(self):
-        return ConversationHandler.END
+def start(bot, update):
+    update.message.reply_text("Я Бот-помощник для игр. Что вам нужно?",
+                              reply_markup=markup)
 
 
-class Sights:
-    def start(bot, update):
-        Cities().end()
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
+def dice(bot, update):
+    update.message.reply_text("Вы выбрали dice.",
+                              reply_markup=markup_dice)
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 1
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
 
-    def first_response(bot, update):
-        # Это ответ на первый вопрос.
-        # Мы можем использовать его во втором вопросе.
-        locality = update.message.text
-        update.message.reply_text(
-            "Какая погода в городе {locality}?".format(**locals()))
-        # Следующее текстовое сообщение
-        # будет обработано обработчиком states[2]
-        return 2
+def RollOneDie(bot, update):
+    update.message.reply_text(random.randint(1, 6))
 
-    def second_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 3
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
+def RollTwoDie(bot, update):
+    update.message.reply_text('{0} {1}'.format(random.randint(1, 6), random.randint(1, 6)))
 
-    def third_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 4
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
+def RollMegaDie(bot, update):
+    update.message.reply_text(random.randint(1, 20))
 
-    def fourth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 5
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
+def back(bot, update):
+    update.message.reply_text("Вы вышли в главное меню.", reply_markup=markup)
 
-    def fivth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 6
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
+def timer(bot, update):
+    update.message.reply_text("Вы выбрали timer.",
+                              reply_markup=markup_timer)
 
-    def sixth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 7
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
+def close(bot, update, chat_data):
+    # Проверяем, что задача ставилась
+    # (вот зачем нужно было ее записать в chat_data).
+    print('ssds')
+    if 'job' in chat_data:
+        # планируем удаление задачи (выполнется, когда будет возможность)
+        chat_data['job'].schedule_removal()
+        # и очищаем пользовательские данные
+        del chat_data['job']
 
-    def seventh_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
+    update.message.reply_text('Таймер сброшен', reply_markup=markup_timer)
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 8
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
 
-    def eighth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
+def task30(bot, job):
+    bot.send_message(job.context, text='30 секунд истекло')
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 9
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
 
-    def ninth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
+def tri_sec(bot, update, job_queue, chat_data):
+    # создаём задачу task в очереди job_queue через 20 секунд
+    # передаём ей идентификатор текущего чата
+    # (будет доступен через job.context)
+    delay = 30  # секунд
+    job = job_queue.run_once(task30, delay, context=update.message.chat_id)
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 10
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
+    # Запоминаем в пользовательских данных созданную задачу.
+    chat_data['job'] = job
 
-    def tenth_response(bot, update):
-        update.message.reply_text(
-            "Привет. Пройдите небольшой опрос, пожалуйста!\n"
-            "Вы можете прервать опрос, послав команду /stop.\n"
-            "В каком городе вы живёте?")
+    # Присылаем сообщение о том, что всё получилось.
+    update.message.reply_text('засек 30 секунд', reply_markup=markup_close)
 
-        # Число-ключ в словаре states —
-        # втором параметре ConversationHandler'а.
-        return 1
-        # Оно указывает, что дальше на сообщения
-        # от этого пользователя должен отвечать обработчик states[1].
-        # До этого момента обработчиков текстовых сообщений
-        # для этого пользователя не существовало,
-        # поэтому текстовые сообщения игнорировались.
 
-    def stop(bot, update):
-        update.message.reply_text(
-            "Жаль. А было бы интерсно пообщаться. Всего доброго!")
-        return ConversationHandler.END  # Константа, означающая конец диалога
+def task60(bot, job):
+    bot.send_message(job.context, text='минута истекла')
 
-    def end(self):
-        return ConversationHandler.END
+
+def min_sec(bot, update, job_queue, chat_data):
+    # создаём задачу task в очереди job_queue через 20 секунд
+    # передаём ей идентификатор текущего чата
+    # (будет доступен через job.context)
+    delay = 60  # секунд
+    job = job_queue.run_once(task30, delay, context=update.message.chat_id)
+
+    # Запоминаем в пользовательских данных созданную задачу.
+    chat_data['job'] = job
+
+    # Присылаем сообщение о том, что всё получилось.
+    update.message.reply_text('засек минуту', reply_markup=markup_close)
+
+
+def task300(bot, job):
+    bot.send_message(job.context, text='5 минут истекло')
+
+
+def five_min_sec(bot, update, job_queue, chat_data):
+    # создаём задачу task в очереди job_queue через 20 секунд
+    # передаём ей идентификатор текущего чата
+    # (будет доступен через job.context)
+    delay = 300  # секунд
+    job = job_queue.run_once(task300, delay, context=update.message.chat_id)
+
+    # Запоминаем в пользовательских данных созданную задачу.
+    chat_data['job'] = job
+
+    # Присылаем сообщение о том, что всё получилось.
+    update.message.reply_text('засек 5 минут', reply_markup=markup_close)
 
 
 def main():
@@ -357,63 +131,21 @@ def main():
     # будет вызываться при получении сообщения с типом "текст",
     # т.е. текстовых сообщений.
 
-    city_game = Cities
-    sight_game = Sights
-
-    conv_handler_cities = ConversationHandler(
-        # Точка входа в диалог.
-        # В данном случае — команда /start. Она задаёт первый вопрос.
-        entry_points=[CommandHandler('start_game_cities', city_game.start)],
-
-        # Состояние внутри диалога. Вариант с двумя обработчиками,
-        # фильтрующими текстовые сообщения.
-        states={
-            # Функция читает ответ на первый вопрос и задаёт второй.
-            1: [MessageHandler(Filters.text, city_game.first_response)],
-            # Функция читает ответ на второй вопрос и завершает диалог.
-            2: [MessageHandler(Filters.text, city_game.second_response)],
-            3: [MessageHandler(Filters.text, city_game.third_response)],
-            4: [MessageHandler(Filters.text, city_game.fourth_response)],
-            5: [MessageHandler(Filters.text, city_game.fivth_response)],
-            6: [MessageHandler(Filters.text, city_game.sixth_response)],
-            7: [MessageHandler(Filters.text, city_game.second_response)],
-            8: [MessageHandler(Filters.text, city_game.eighth_response)],
-            9: [MessageHandler(Filters.text, city_game.ninth_response)],
-            10: [MessageHandler(Filters.text, city_game.tenth_response)]
-        },
-
-        # Точка прерывания диалога. В данном случае — команда /stop.
-        fallbacks=[CommandHandler('stop_game_cities', city_game.stop)]
-    )
-    conv_handler_sights = ConversationHandler(
-        # Точка входа в диалог.
-        # В данном случае — команда /start. Она задаёт первый вопрос.
-        entry_points=[CommandHandler('start_game_sights', sight_game.start)],
-
-        # Состояние внутри диалога. Вариант с двумя обработчиками,
-        # фильтрующими текстовые сообщения.
-        states={
-            # Функция читает ответ на первый вопрос и задаёт второй.
-            1: [MessageHandler(Filters.text, sight_game.first_response)],
-            # Функция читает ответ на второй вопрос и завершает диалог.
-            2: [MessageHandler(Filters.text, sight_game.second_response)],
-            3: [MessageHandler(Filters.text, sight_game.third_response)],
-            4: [MessageHandler(Filters.text, sight_game.fourth_response)],
-            5: [MessageHandler(Filters.text, sight_game.fivth_response)],
-            6: [MessageHandler(Filters.text, sight_game.sixth_response)],
-            7: [MessageHandler(Filters.text, sight_game.second_response)],
-            8: [MessageHandler(Filters.text, sight_game.eighth_response)],
-            9: [MessageHandler(Filters.text, sight_game.ninth_response)],
-            10: [MessageHandler(Filters.text, sight_game.tenth_response)]
-        },
-
-        # Точка прерывания диалога. В данном случае — команда /stop.
-        fallbacks=[CommandHandler('stop_game_sights', sight_game.stop)]
-    )
-
-    # Регистрируем обработчик в диспетчере.
-    dp.add_handler(conv_handler_cities)
-    dp.add_handler(conv_handler_sights)
+    # Зарегистрируем их в диспетчере.
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("dice", dice))
+    dp.add_handler(CommandHandler("RollOneDie", RollOneDie))
+    dp.add_handler(CommandHandler("RollTwoDie", RollTwoDie))
+    dp.add_handler(CommandHandler("RollMegaDie", RollMegaDie))
+    dp.add_handler(CommandHandler("back", back))
+    dp.add_handler(CommandHandler("timer", timer))
+    dp.add_handler(CommandHandler("30sec", tri_sec,
+                                  pass_job_queue=True, pass_chat_data=True))
+    dp.add_handler(CommandHandler("minute", min_sec,
+                                  pass_job_queue=True, pass_chat_data=True))
+    dp.add_handler(CommandHandler("5min", five_min_sec,
+                                  pass_job_queue=True, pass_chat_data=True))
+    dp.add_handler(CommandHandler("close", close, pass_chat_data=True))
 
     # Запускаем цикл приема и обработки сообщений.
     updater.start_polling()
