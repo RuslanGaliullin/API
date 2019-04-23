@@ -12,7 +12,7 @@ class Cities:
             "Привет. Пройдите небольшой опрос, пожалуйста!\n"
             "Вы можете прервать опрос, послав команду /stop.\n"
             "В каком городе вы живёте?")
-
+        locality = update.message.text
         # Число-ключ в словаре states —
         # втором параметре ConversationHandler'а.
         return 1
