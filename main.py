@@ -1,10 +1,6 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
 
 
-def echo(bot, update):
-    update.message.reply_text('Привет, это телешоу. Для начала игры напишите /start_game_cities')
-
-
 class Cities:
     def start(bot, update):
         Sights().end()
@@ -12,7 +8,6 @@ class Cities:
             "Привет. Пройдите небольшой опрос, пожалуйста!\n"
             "Вы можете прервать опрос, послав команду /stop.\n"
             "В каком городе вы живёте?")
-        locality = update.message.text
         # Число-ключ в словаре states —
         # втором параметре ConversationHandler'а.
         return 1
@@ -26,6 +21,7 @@ class Cities:
         # Это ответ на первый вопрос.
         # Мы можем использовать его во втором вопросе.
         locality = update.message.text
+        print(locality)
         update.message.reply_text(
             "Какая погода в городе {locality}?".format(**locals()))
         # Следующее текстовое сообщение
@@ -360,7 +356,6 @@ def main():
     # После регистрации обработчика в диспетчере эта функция
     # будет вызываться при получении сообщения с типом "текст",
     # т.е. текстовых сообщений.
-    text_handler = MessageHandler(Filters.text, echo)
 
     city_game = Cities
     sight_game = Sights
@@ -417,7 +412,6 @@ def main():
     )
 
     # Регистрируем обработчик в диспетчере.
-    dp.add_handler(text_handler)
     dp.add_handler(conv_handler_cities)
     dp.add_handler(conv_handler_sights)
 
