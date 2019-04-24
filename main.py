@@ -32,38 +32,20 @@ class Helper:
         except:
             print('ошибочка')
 
-
-def get_language(self, lang):
-    alll = {'английский': 'en', 'русский': 'ru', 'абхазский': 'ab', 'арабский'
-    : 'ar', 'азербайджанский': 'az', 'армянский': 'hy', 'башкирский': 'ba', 'белорусский': 'be',
-            'болгарский': 'bg',
-            'венгерский': 'hu', 'вьетнамский': 'vi', 'грузинский': 'ka', 'датский': 'da', 'иврит': 'he',
-            'испанский': 'es', 'итальянский': 'it', 'немецкий': 'de', 'корейский': 'ko', 'японский': 'ja',
-            'португальский': 'pt'}
-    if lang in alll.keys():
-        return all[lang]
-    return 'Я не знаю такой язык'
+    def get_language(self, lang):
+        alll = {'английский': 'en', 'русский': 'ru', 'абхазский': 'ab', 'арабский'
+        : 'ar', 'азербайджанский': 'az', 'армянский': 'hy', 'башкирский': 'ba', 'белорусский': 'be',
+                'болгарский': 'bg',
+                'венгерский': 'hu', 'вьетнамский': 'vi', 'грузинский': 'ka', 'датский': 'da', 'иврит': 'he',
+                'испанский': 'es', 'итальянский': 'it', 'немецкий': 'de', 'корейский': 'ko', 'японский': 'ja',
+                'португальский': 'pt'}
+        if lang in alll.keys():
+            return alll[lang]
+        return None
 
 
 helpp = Helper()
 
-
-def translater(bot, updater):
-    translator_uri = \
-        "https://translate.yandex.net/api/v1.5/tr.json/translate"
-    response = requests.get(
-        translator_uri,
-        params={
-            "key":
-            # Ключ, который надо получить по ссылке в тексте.
-                "{YOUR_KEY_RECIEVED}",
-            # Направление перевода: с русского на английский.
-            "lang": "ru-en",
-            # То, что нужно перевести.
-            "text": updater.message.text
-        })
-    updater.message.reply_text(
-        "\n\n".join([response.json()["text"][0]]))
 
 
 def start(bot, update, city):
@@ -75,12 +57,35 @@ def zontik(bot, update):
 
 
 def perevod(bot, update):
-    pass
+    from_trans = update.message.text.split()[1]
+    to_trans = update.message.text.split()[2]
+    words = update.message.text.split()[3:]
+    if helpp.get_language(from_trans) is not None:
+        if helpp.get_language(to_trans) is not None:
+            from_trans = helpp.get_language(from_trans)
+            to_trans =helpp.get_language(to_trans)
+            translator_uri = \
+                "https://translate.yandex.net/api/v1.5/tr.json/translate"
+            response = requests.get(
+                translator_uri,
+                params={
+                    "key":
+                    "trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda",
+                    "lang": "{}-{}".format(from_trans, to_trans),
+                    # То, что нужно перевести.
+                    "text": ' '.join(words)
+                })
+            update.message.reply_text(
+                " ".join(response.json()["text"]))
+        else:
+            update.message.reply_text('Я не знаю такого языка: {}'.format(to_trans))
+    else:
+        update.message.reply_text('Я не знаю такого языка: {}'.format(from_trans))
 
 
 def pogoda(bot, update):
     # погода
-    city = update.message.text
+    city = update.message.text.split()[1:]
     api_weather = 'https://api.weather.yandex.ru/v1/informers?'
     cords = helpp.get_coords(city).split()
     params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
@@ -105,8 +110,8 @@ def kartinka(bot, update):
             "text": find
         })
     text = ''.join(response.json()['text'])
-    update.message.reply_text('Вот то, что вы искали '+
-        'https://www.google.ru/search?q=' + text + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
+    update.message.reply_text('Вот то, что вы искали ' +
+                              'https://www.google.ru/search?q=' + text + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
 
 
 def dobratsa(bot, update):
