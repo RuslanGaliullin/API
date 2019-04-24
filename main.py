@@ -2,6 +2,7 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import random
+import webbrowser
 
 reply_keyboard = [['/dice'],
                   ['/timer']]
@@ -20,6 +21,8 @@ markup_close = ReplyKeyboardMarkup(reply_keyboard_close, one_time_keyboard=False
 
 
 def start(bot, update):
+    webbrowser.open_new_tab(
+        'https://www.google.ru/search?q=' + 'flag lgbt' + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
     update.message.reply_text("Я Бот-помощник для игр. Что вам нужно?",
                               reply_markup=markup)
 
