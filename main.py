@@ -2,7 +2,6 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import requests
-import webbrowser
 
 reply_keyboard = [['/zontik', '/perevod', '/pogoda'],
                   ['/kartinka', '/dobratsa', '/apteka']]
@@ -47,13 +46,20 @@ class Helper:
 helpp = Helper()
 
 
-
-def start(bot, update, city):
+def start(bot, update):
     pass
 
 
 def zontik(bot, update):
-    pass
+    print(0)
+    adressa = update.message.text.split()[1:]
+    adress = helpp.get_coords(adressa).split()
+    print(adress)
+    api_forecast = 'https://api.weather.yandex.ru/v1/forecast?'
+    params = {'lat': adress[0], 'lon': adress[1], 'lang': 'ru_RU',
+              'X-Yandex-API-Key': 'e43cb430-0dd4-481d-884e-8423a36a6d9a'}
+    response = requests.get(api_forecast, params=params)
+    print(response.content)
 
 
 def perevod(bot, update):
@@ -63,14 +69,14 @@ def perevod(bot, update):
     if helpp.get_language(from_trans) is not None:
         if helpp.get_language(to_trans) is not None:
             from_trans = helpp.get_language(from_trans)
-            to_trans =helpp.get_language(to_trans)
+            to_trans = helpp.get_language(to_trans)
             translator_uri = \
                 "https://translate.yandex.net/api/v1.5/tr.json/translate"
             response = requests.get(
                 translator_uri,
                 params={
                     "key":
-                    "trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda",
+                        "trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda",
                     "lang": "{}-{}".format(from_trans, to_trans),
                     # То, что нужно перевести.
                     "text": ' '.join(words)
