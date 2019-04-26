@@ -2,6 +2,7 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import requests
+import wolframalpha
 
 reply_keyboard = [['/zontik', '/perevod', '/pogoda'],
                   ['/kartinka', '/dobratsa', '/apteka']]
@@ -44,6 +45,13 @@ class Helper:
 
 
 helpp = Helper()
+
+
+def urawn(bot, update, args):
+    client = wolframalpha.Client('Y2J834-KHE8APQ9HU')
+    res = client.query(' '.join(args))
+    answer = next(res.results).text
+    update.message.reply_text(answer)
 
 
 def start(bot, update):
@@ -147,6 +155,7 @@ def main():
     dp.add_handler(CommandHandler("kartinka", kartinka))
     dp.add_handler(CommandHandler("dobratsa", dobratsa))
     dp.add_handler(CommandHandler("apteka", apteka))
+    dp.add_handler(CommandHandler("urawn", urawn, pass_args=True))
     # Запускаем цикл приема и обработки сообщений.
     updater.start_polling()
     # Ждём завершения приложения.
