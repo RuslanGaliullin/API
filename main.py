@@ -3,6 +3,8 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import requests
 import wolframalpha
+import ssl
+import pymorphy2
 
 reply_keyboard = [['/zontik', '/perevod', '/pogoda'],
                   ['/kartinka', '/dobratsa', '/apteka']]
@@ -48,6 +50,7 @@ helpp = Helper()
 
 
 def urawn(bot, update, args):
+    print(21)
     client = wolframalpha.Client('Y2J834-KHE8APQ9HU')
     res = client.query(' '.join(args))
     answer = next(res.results).text
@@ -128,8 +131,18 @@ def kartinka(bot, update):
                               'https://www.google.ru/search?q=' + text + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
 
 
-def dobratsa(bot, update):
-    pass
+def word(bot, update):
+    word = update.message.text.split()[1]
+    morph = pymorphy2.MorphAnalyzer()
+    chosen = morph.parse(word)[1]
+
+    update.message.reply_text('Часть речи: ', chosen.tag.POS, '\n',
+                              'Одушивленность: ',chosen.tag.animacy, '\n',
+                              'Bид: ', chosen.tag.aspect, '\n',
+                              'Падеж: ', chosen.tag.case, '\n',
+                              'Род: ', chosen.tag.gender, '\n',
+                              'Лицо: ', chosen.tag.person, '\n',
+                              'Время: ', chosen.tag.tense, '\n')
 
 
 def apteka(bot, update):
@@ -153,7 +166,7 @@ def main():
     dp.add_handler(CommandHandler("perevod", perevod))
     dp.add_handler(CommandHandler("pogoda", pogoda))
     dp.add_handler(CommandHandler("kartinka", kartinka))
-    dp.add_handler(CommandHandler("dobratsa", dobratsa))
+    dp.add_handler(CommandHandler("word", word))
     dp.add_handler(CommandHandler("apteka", apteka))
     dp.add_handler(CommandHandler("urawn", urawn, pass_args=True))
     # Запускаем цикл приема и обработки сообщений.
