@@ -58,7 +58,8 @@ def urawn(bot, update, args):
 
 
 def start(bot, update):
-    pass
+    update.message.reply_text("Хай кста",
+                              reply_markup=markup)
 
 
 def zontik(bot, update):
