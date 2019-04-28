@@ -3,10 +3,16 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import requests
 import wolframalpha
+import wikipedia
+import ssl
 
-reply_keyboard = [['/zontik', '/perevod', '/pogoda'],
-                  ['/kartinka', '/dobratsa', '/apteka']]
+reply_keyboard = [['/zontik', '/perevod', '/pogoda', '/info'],
+                  ['/kartinka', '/dobratsa', '/apteka', '/help']]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
+
+
+def help(bot, update):
+    update.message.reply_text("/zontik - функция показывающая прогноз погоды")
 
 
 class Helper:
@@ -55,7 +61,7 @@ def urawn(bot, update, args):
 
 
 def start(bot, update):
-    update.message.reply_text("Хай кста",
+    update.message.reply_text("Привет! Я бот помощник для учебы. Список команд доступен по /help",
                               reply_markup=markup)
 
 
@@ -109,24 +115,14 @@ def pogoda(bot, update):
                               reply_markup=markup)
 
 
-def kartinka(bot, update):
-    find = update.message.text.split()[1:]
-    translator_uri = \
-        "https://translate.yandex.net/api/v1.5/tr.json/translate"
-    response = requests.get(
-        translator_uri,
-        params={
-            "key":
-            # Ключ, который надо получить по ссылке в тексте.
-                "trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda",
-            # Направление перевода: с русского на английский.
-            "lang": "ru-en",
-            # То, что нужно перевести.
-            "text": find
-        })
-    text = ''.join(response.json()['text'])
-    update.message.reply_text('Вот то, что вы искали ' +
-                              'https://www.google.ru/search?q=' + text + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
+def kartinka(bot, update, chat_data):
+    update.message.reply_text('Какая картинка вас интересует?')
+    chat_data['kartinka'] = 1
+
+
+def info(bot, update, chat_data):
+    update.message.reply_text('Что вас интересует?')
+    chat_data['wiki'] = 1
 
 
 def dobratsa(bot, update):
@@ -135,6 +131,35 @@ def dobratsa(bot, update):
 
 def apteka(bot, update):
     pass
+
+
+def priem(bot, update, chat_data):
+    if 'kartinka' in chat_data:
+        print(1)
+        find = update.message.text
+        translator_uri = \
+            "https://translate.yandex.net/api/v1.5/tr.json/translate"
+        response = requests.get(
+            translator_uri,
+            params={
+                "key":
+                # Ключ, который надо получить по ссылке в тексте.
+                    "trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda",
+                # Направление перевода: с русского на английский.
+                "lang": "ru-en",
+                # То, что нужно перевести.
+                "text": find
+            })
+        text = ''.join(response.json()['text'])
+        update.message.reply_text('Вот то, что вы искали ' +
+                                  'https://www.google.ru/search?q=' + text + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
+        del chat_data['kartinka']
+    elif 'wiki' in chat_data:
+        wikipedia.set_lang("ru")
+        update.message.reply_text(wikipedia.summary(update.message.text, sentences=1))
+        del chat_data['wiki']
+    else:
+        update.message.reply_text('Вы не выбрали никакой функции')
 
 
 def main():
@@ -149,11 +174,17 @@ def main():
     # будет вызываться при получении сообщения с типом "текст",
     # т.е. текстовых сообщений.
     # Зарегистрируем их в диспетчере.
+    text_handler = MessageHandler(Filters.text, priem, pass_chat_data=True)
+
+    # Регистрируем обработчик в диспетчере.
+    dp.add_handler(text_handler)
+
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("zontik", zontik))
     dp.add_handler(CommandHandler("perevod", perevod))
     dp.add_handler(CommandHandler("pogoda", pogoda))
-    dp.add_handler(CommandHandler("kartinka", kartinka))
+    dp.add_handler(CommandHandler("kartinka", kartinka, pass_chat_data=True))
+    dp.add_handler(CommandHandler("info", info, pass_chat_data=True))
     dp.add_handler(CommandHandler("dobratsa", dobratsa))
     dp.add_handler(CommandHandler("apteka", apteka))
     dp.add_handler(CommandHandler("urawn", urawn, pass_args=True))
