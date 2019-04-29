@@ -93,7 +93,7 @@ def perevod(bot, update):
         update.message.reply_text('Я не знаю такого языка: {}'.format(from_trans))
 
 
-#def pogoda(bot, update):
+# def pogoda(bot, update):
 #    # погода
 #    city = update.message.text.split()[1:]
 #    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
@@ -112,7 +112,6 @@ def kartinka(bot, update, chat_data):
 def info(bot, update, chat_data):
     update.message.reply_text('Что вас интересует?')
     chat_data['wiki'] = 1
-
 
 
 def priem(bot, update, chat_data):
@@ -152,22 +151,41 @@ def priem(bot, update, chat_data):
         asking = " ".join(response.json()["text"])
         update.message.reply_text(wikipedia.summary(asking, sentences=1))
         del chat_data['wiki']
+    elif 'word' in chat_data:
+        try:
+            word = update.message.text.split()[0]
+            morph = pymorphy2.MorphAnalyzer()
+            chosen = morph.parse(word)[1]
+            print('Часть речи: ', chosen.tag.POS,
+                  'Одушивленность: ', chosen.tag.animacy,
+                  'Bид: ', chosen.tag.aspect,
+                  'Падеж: ', chosen.tag.case,
+                  'Род: ', chosen.tag.gender,
+                  'Лицо: ', chosen.tag.person,
+                  'Время: ', chosen.tag.tense)
+            if chosen.tag.POS == 'NOUN':
+                update.message.reply_text(
+                    'Часть речи: ' + chosen.tag.POS + '\n' + 'Одушивленность: ' + chosen.tag.animacy + '\n' + 'Падеж: ' + chosen.tag.case + '\n' + 'Род: ' + chosen.tag.gender)
+            elif chosen.tag.POS == 'INFN':
+                update.message.reply_text(
+                    'Часть речи: ' + chosen.tag.POS + '\n' + 'Bид: ' + chosen.tag.aspect)
+            elif chosen.tag.POS == 'VERB':
+                update.message.reply_text(
+                    'Часть речи: ' + chosen.tag.POS + '\n' + 'Bид: ' + chosen.tag.aspect + '\n' + 'Род: ' + chosen.tag.gender + '\n' + 'Время: ' + chosen.tag.tense)
+            elif chosen.tag.POS == 'ADVB' or chosen.tag.POS == 'INTJ':
+                update.message.reply_text('Часть речи: ' + chosen.tag.POS)
+            else:
+                update.message.reply_text('Неизвестное слово')
+        except Exception as e:
+            update.message.reply_text(e)
+        del chat_data['word']
     else:
         update.message.reply_text('Вы не выбрали никакой функции')
 
 
-def word(bot, update):
-    word = update.message.text.split()[1]
-    morph = pymorphy2.MorphAnalyzer()
-    chosen = morph.parse(word)[1]
-
-    update.message.reply_text('Часть речи: ', chosen.tag.POS, '\n',
-                              'Одушивленность: ', chosen.tag.animacy, '\n',
-                              'Bид: ', chosen.tag.aspect, '\n',
-                              'Падеж: ', chosen.tag.case, '\n',
-                              'Род: ', chosen.tag.gender, '\n',
-                              'Лицо: ', chosen.tag.person, '\n',
-                              'Время: ', chosen.tag.tense, '\n')
+def word(bot, update, chat_data):
+    update.message.reply_text('Какое слово вас интересует?')
+    chat_data['word'] = 1
 
 
 def main():
@@ -188,8 +206,8 @@ def main():
     dp.add_handler(text_handler)
 
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("word", word))
-    dp.add_handler(CommandHandler("perevod", perevod))
+    dp.add_handler(CommandHandler("word", word, pass_chat_data=True))
+    dp.add_handler(CommandHandler("perevod", perevod, pass_chat_data=True))
     dp.add_handler(CommandHandler("kartinka", kartinka, pass_chat_data=True))
     dp.add_handler(CommandHandler("info", info, pass_chat_data=True))
     dp.add_handler(CommandHandler("urawn", urawn, pass_args=True))
