@@ -15,7 +15,9 @@ reply_keyboard_timer = [['/unset_timer']]
 markup_timer = ReplyKeyboardMarkup(reply_keyboard_timer, one_time_keyboard=False)
 
 
+# вспомогательный класс
 class Helper:
+    # функция для поиска координат для будующих функций
     def get_coords(self, adress):
         try:
             address = adress
@@ -38,6 +40,7 @@ class Helper:
         except:
             print('ошибочка')
 
+    # метод для переводчика
     def get_language(self, lang):
         alll = {'английский': 'en', 'русский': 'ru', 'абхазский': 'ab', 'арабский'
         : 'ar', 'азербайджанский': 'az', 'армянский': 'hy', 'башкирский': 'ba', 'белорусский': 'be',
@@ -48,9 +51,6 @@ class Helper:
         if lang in alll.keys():
             return alll[lang]
         return None
-
-
-helpp = Helper()
 
 
 def start(bot, update):
@@ -116,6 +116,7 @@ def urawn(bot, update, chat_data):
 
 
 def priem(bot, update, chat_data, job_queue):
+    helpp = Helper()
     if 'kartinka' in chat_data:
         find = update.message.text
         translator_uri = \
