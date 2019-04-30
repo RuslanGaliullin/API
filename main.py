@@ -4,10 +4,10 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import requests
 import wolframalpha
 import wikipedia
-#import pymorphy2
+import pymorphy2
 import ssl
 
-reply_keyboard = [['/set_timer', '/perevod', '/info'],
+reply_keyboard = [['/set_timer', '/perevod', '/info', '/word'],
                   ['/kartinka', '/urawn', '/help']]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
 
@@ -60,7 +60,7 @@ def start(bot, update):
 
 def help(bot, update):
     update.message.reply_text(
-        "/set_timer - ставит таймер на указанное время\n/unset_timer - отменяет таймер\n/perevod - переводит сообщение с одного языка на другой\n/info - показывет информацию о событие или предмете\n/kartinka - находит картинку по заданному сообщеню\n/urawn - решает математические уравнения")
+        "/set_timer - ставит таймер на указанное время\n/unset_timer - отменяет таймер\n/perevod - переводит сообщение с одного языка на другой\n/info - показывет информацию о событие или предмете\n/word - разбирает слово по свойствам\n/kartinka - находит картинку по заданному сообщеню\n/urawn - решает математические уравнения")
 
 
 def set_timer(bot, update, chat_data):
@@ -104,17 +104,20 @@ def urawn(bot, update, chat_data):
     chat_data['urawn'] = 1
 
 
-def pogoda(bot, update):
-    # погода
-    helpp = Helper()
-    city = update.message.text.split()[1:]
-    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
-    cords = helpp.get_coords(city).split()
-    params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
-    response = requests.get(api_weather, params=params)
-    print(response)
-    update.message.reply_text("Я Бот-помощник для ДЭБИЛ. Что вам нужно?",
-                              reply_markup=markup)
+# def pogoda(bot, update):
+#    # погода
+#    helpp = Helper()
+#    city = update.message.text.split()[1:]
+#    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
+#    cords = helpp.get_coords(city).split()
+#    params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
+#    response = requests.get(api_weather, params=params)
+#    print(response)
+
+
+def word(bot, update, chat_data):
+    update.message.reply_text('Какое слово вас интересует?')
+    chat_data['word'] = 1
 
 
 def priem(bot, update, chat_data, job_queue):
@@ -139,7 +142,6 @@ def priem(bot, update, chat_data, job_queue):
                                   'https://www.google.ru/search?q=' + text + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
         del chat_data['kartinka']
     elif 'wiki' in chat_data:
-        print(0)
         wikipedia.set_lang("ru")
         translator_uri = \
             "https://translate.yandex.net/api/v1.5/tr.json/translate"
@@ -153,8 +155,7 @@ def priem(bot, update, chat_data, job_queue):
                 "text": ' '.join(update.message.text.split()[1:])
             })
         asking = " ".join(response.json()["text"])
-        print(1)
-        update.message.reply_text(wikipedia.summary(asking, sentences=1))
+        update.message.reply_text(wikipedia.summary(asking))
         del chat_data['wiki']
     elif 'word' in chat_data:
         try:
@@ -232,11 +233,6 @@ def priem(bot, update, chat_data, job_queue):
         del chat_data['urawn']
     else:
         update.message.reply_text('Вы не выбрали никакой функции')
-
-
-def word(bot, update, chat_data):
-    update.message.reply_text('Какое слово вас интересует?')
-    chat_data['word'] = 1
 
 
 def main():
