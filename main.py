@@ -4,7 +4,7 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import requests
 import wolframalpha
 import wikipedia
-import pymorphy2
+#import pymorphy2
 import ssl
 
 reply_keyboard = [['/set_timer', '/perevod', '/info'],
@@ -106,11 +106,13 @@ def urawn(bot, update, chat_data):
 
 def pogoda(bot, update):
     # погода
+    helpp = Helper()
     city = update.message.text.split()[1:]
     api_weather = 'https://api.weather.yandex.ru/v1/informers?'
     cords = helpp.get_coords(city).split()
     params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
     response = requests.get(api_weather, params=params)
+    print(response)
     update.message.reply_text("Я Бот-помощник для ДЭБИЛ. Что вам нужно?",
                               reply_markup=markup)
 
@@ -137,6 +139,7 @@ def priem(bot, update, chat_data, job_queue):
                                   'https://www.google.ru/search?q=' + text + '&newwindow=1&espv=2&source=lnms&tbm=isch&sa=X')
         del chat_data['kartinka']
     elif 'wiki' in chat_data:
+        print(0)
         wikipedia.set_lang("ru")
         translator_uri = \
             "https://translate.yandex.net/api/v1.5/tr.json/translate"
@@ -150,6 +153,7 @@ def priem(bot, update, chat_data, job_queue):
                 "text": ' '.join(update.message.text.split()[1:])
             })
         asking = " ".join(response.json()["text"])
+        print(1)
         update.message.reply_text(wikipedia.summary(asking, sentences=1))
         del chat_data['wiki']
     elif 'word' in chat_data:
