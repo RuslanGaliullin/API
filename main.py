@@ -1,4 +1,4 @@
-# Импортируем необходимые классы.
+# Импортируем необходимые библиотеки.
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import requests
@@ -42,8 +42,8 @@ class Helper:
 
     # метод для переводчика
     def get_language(self, lang):
-        alll = {'английский': 'en', 'русский': 'ru', 'абхазский': 'ab', 'арабский'
-        : 'ar', 'азербайджанский': 'az', 'армянский': 'hy', 'башкирский': 'ba', 'белорусский': 'be',
+        alll = {'английский': 'en', 'русский': 'ru', 'абхазский': 'ab', 'арабский': 'ar', 'азербайджанский': 'az',
+                'армянский': 'hy', 'башкирский': 'ba', 'белорусский': 'be',
                 'болгарский': 'bg',
                 'венгерский': 'hu', 'вьетнамский': 'vi', 'грузинский': 'ka', 'датский': 'da', 'иврит': 'he',
                 'испанский': 'es', 'итальянский': 'it', 'немецкий': 'de', 'корейский': 'ko', 'японский': 'ja',
@@ -51,6 +51,9 @@ class Helper:
         if lang in alll.keys():
             return alll[lang]
         return None
+
+
+helpp = Helper()
 
 
 def start(bot, update):
@@ -200,11 +203,11 @@ def priem(bot, update, chat_data, job_queue):
                                   reply_markup=markup_timer)
         del chat_data['timer']
     elif 'perevod' in chat_data:
-        from_trans = update.message.text.split()[0]
-        to_trans = update.message.text.split()[1]
+        from_trans = update.message.text.split()[0].lower()
+        to_trans = update.message.text.split()[1].lower()
         words = update.message.text.split()[2:]
         if helpp.get_language(from_trans) is not None:
-            if helpp.get_language(to_trans) is not None:
+            if helpp.get_language(to_trans.lower()) is not None:
                 from_trans = helpp.get_language(from_trans)
                 to_trans = helpp.get_language(to_trans)
                 translator_uri = \
@@ -219,7 +222,8 @@ def priem(bot, update, chat_data, job_queue):
                         "text": ' '.join(words)
                     })
                 update.message.reply_text(
-                    " ".join(response.json()["text"]))
+                    " ".join(response.json()[
+                                 "text"] + '\nПереведено сервисом «Яндекс.Переводчик» http://translate.yandex.ru/.'))
             else:
                 update.message.reply_text('Я не знаю такого языка: {}'.format(to_trans))
         else:
