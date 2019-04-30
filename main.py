@@ -104,15 +104,15 @@ def urawn(bot, update, chat_data):
     chat_data['urawn'] = 1
 
 
-# def pogoda(bot, update):
-#    # погода
-#    city = update.message.text.split()[1:]
-#    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
-#    cords = helpp.get_coords(city).split()
-#    params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
-#    response = requests.get(api_weather, params=params)
-#    update.message.reply_text("Я Бот-помощник для ДЭБИЛ. Что вам нужно?",
-#                              reply_markup=markup)
+def pogoda(bot, update):
+    # погода
+    city = update.message.text.split()[1:]
+    api_weather = 'https://api.weather.yandex.ru/v1/informers?'
+    cords = helpp.get_coords(city).split()
+    params = {'lat': cords[0], 'lon': cords[1], 'lang': 'ru_RU'}
+    response = requests.get(api_weather, params=params)
+    update.message.reply_text("Я Бот-помощник для ДЭБИЛ. Что вам нужно?",
+                              reply_markup=markup)
 
 
 def priem(bot, update, chat_data, job_queue):
