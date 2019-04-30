@@ -7,13 +7,12 @@ import wikipedia
 import pymorphy2
 import ssl
 
-reply_keyboard = [['/zontik', '/perevod', '/pogoda', '/info'],
-                  ['/kartinka', '/dobratsa', '/apteka', '/help']]
+reply_keyboard = [['/set_timer', '/perevod', '/info'],
+                  ['/kartinka', '/urawn', '/help']]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
 
-
-def help(bot, update):
-    update.message.reply_text("/zontik - функция показывающая прогноз погоды")
+reply_keyboard_timer = [['/unset_timer']]
+markup_timer = ReplyKeyboardMarkup(reply_keyboard_timer, one_time_keyboard=False)
 
 
 class Helper:
@@ -54,43 +53,55 @@ class Helper:
 helpp = Helper()
 
 
-def urawn(bot, update, args):
-    client = wolframalpha.Client('Y2J834-KHE8APQ9HU')
-    res = client.query(' '.join(args))
-    answer = next(res.results).text
-    update.message.reply_text(answer)
-
-
 def start(bot, update):
     update.message.reply_text("Привет! Я бот помощник для учебы. Список команд доступен по /help",
                               reply_markup=markup)
 
 
-def perevod(bot, update):
-    from_trans = update.message.text.split()[1]
-    to_trans = update.message.text.split()[2]
-    words = update.message.text.split()[3:]
-    if helpp.get_language(from_trans) is not None:
-        if helpp.get_language(to_trans) is not None:
-            from_trans = helpp.get_language(from_trans)
-            to_trans = helpp.get_language(to_trans)
-            translator_uri = \
-                "https://translate.yandex.net/api/v1.5/tr.json/translate"
-            response = requests.get(
-                translator_uri,
-                params={
-                    "key":
-                        "trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda",
-                    "lang": "{}-{}".format(from_trans, to_trans),
-                    # То, что нужно перевести.
-                    "text": ' '.join(words)
-                })
-            update.message.reply_text(
-                " ".join(response.json()["text"]))
-        else:
-            update.message.reply_text('Я не знаю такого языка: {}'.format(to_trans))
-    else:
-        update.message.reply_text('Я не знаю такого языка: {}'.format(from_trans))
+def help(bot, update):
+    update.message.reply_text(
+        "/set_timer - ставит таймер на указанное время\n/unset_timer - отменяет таймер\n/perevod - переводит сообщение с одного языка на другой\n/info - показывет информацию о событие или предмете\n/kartinka - находит картинку по заданному сообщеню\n/urawn - решает математические уравнения")
+
+
+def set_timer(bot, update, chat_data):
+    update.message.reply_text('На сколько секунд поставить таймер?')
+    chat_data['timer'] = 1
+
+
+def task(bot, job):
+    bot.send_message(job.context, text='Время кончилось', reply_markup=markup)
+
+
+def unset_timer(bot, update, chat_data):
+    # Проверяем, что задача ставилась
+    # (вот зачем нужно было ее записать в chat_data).
+    if 'job' in chat_data:
+        # планируем удаление задачи (выполнется, когда будет возможность)
+        chat_data['job'].schedule_removal()
+        # и очищаем пользовательские данные
+        del chat_data['job']
+
+    update.message.reply_text('Таймер отменен', reply_markup=markup)
+
+
+def perevod(bot, update, chat_data):
+    update.message.reply_text('С какого на какой язык и что надо перевести?')
+    chat_data['perevod'] = 1
+
+
+def info(bot, update, chat_data):
+    update.message.reply_text('Что вас интересует?')
+    chat_data['wiki'] = 1
+
+
+def kartinka(bot, update, chat_data):
+    update.message.reply_text('Какая картинка вас интересует?')
+    chat_data['kartinka'] = 1
+
+
+def urawn(bot, update, chat_data):
+    update.message.reply_text('Какое уравнение надо решить?')
+    chat_data['urawn'] = 1
 
 
 # def pogoda(bot, update):
@@ -104,19 +115,8 @@ def perevod(bot, update):
 #                              reply_markup=markup)
 
 
-def kartinka(bot, update, chat_data):
-    update.message.reply_text('Какая картинка вас интересует?')
-    chat_data['kartinka'] = 1
-
-
-def info(bot, update, chat_data):
-    update.message.reply_text('Что вас интересует?')
-    chat_data['wiki'] = 1
-
-
-def priem(bot, update, chat_data):
+def priem(bot, update, chat_data, job_queue):
     if 'kartinka' in chat_data:
-        print(1)
         find = update.message.text
         translator_uri = \
             "https://translate.yandex.net/api/v1.5/tr.json/translate"
@@ -179,6 +179,52 @@ def priem(bot, update, chat_data):
         except Exception as e:
             update.message.reply_text(e)
         del chat_data['word']
+    elif 'timer' in chat_data:
+        # создаём задачу task в очереди job_queue через 20 секунд
+        # передаём ей идентификатор текущего чата
+        # (будет доступен через job.context)
+        delay = int(update.message.text.split()[0])  # секунд
+        job = job_queue.run_once(task, delay, context=update.message.chat_id)
+
+        # Запоминаем в пользовательских данных созданную задачу.
+        chat_data['job'] = job
+
+        # Присылаем сообщение о том, что всё получилось.
+        update.message.reply_text('Поставил таймер на {0} cекунд'.format(update.message.text.split()[0]),
+                                  reply_markup=markup_timer)
+        del chat_data['timer']
+    elif 'perevod' in chat_data:
+        from_trans = update.message.text.split()[0]
+        to_trans = update.message.text.split()[1]
+        words = update.message.text.split()[2:]
+        if helpp.get_language(from_trans) is not None:
+            if helpp.get_language(to_trans) is not None:
+                from_trans = helpp.get_language(from_trans)
+                to_trans = helpp.get_language(to_trans)
+                translator_uri = \
+                    "https://translate.yandex.net/api/v1.5/tr.json/translate"
+                response = requests.get(
+                    translator_uri,
+                    params={
+                        "key":
+                            "trnsl.1.1.20190421T150726Z.fe7b6a8c58b8788e.422cda1d99bc4cbed5fd2685e0f4f423a6ec5eda",
+                        "lang": "{}-{}".format(from_trans, to_trans),
+                        # То, что нужно перевести.
+                        "text": ' '.join(words)
+                    })
+                update.message.reply_text(
+                    " ".join(response.json()["text"]))
+            else:
+                update.message.reply_text('Я не знаю такого языка: {}'.format(to_trans))
+        else:
+            update.message.reply_text('Я не знаю такого языка: {}'.format(from_trans))
+        del chat_data['perevod']
+    elif 'urawn' in chat_data:
+        client = wolframalpha.Client('Y2J834-KHE8APQ9HU')
+        res = client.query(update.message.text)
+        answer = next(res.results).text
+        update.message.reply_text(answer)
+        del chat_data['urawn']
     else:
         update.message.reply_text('Вы не выбрали никакой функции')
 
@@ -200,17 +246,20 @@ def main():
     # будет вызываться при получении сообщения с типом "текст",
     # т.е. текстовых сообщений.
     # Зарегистрируем их в диспетчере.
-    text_handler = MessageHandler(Filters.text, priem, pass_chat_data=True)
+    text_handler = MessageHandler(Filters.text, priem, pass_chat_data=True, pass_job_queue=True)
 
     # Регистрируем обработчик в диспетчере.
     dp.add_handler(text_handler)
 
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("word", word, pass_chat_data=True))
     dp.add_handler(CommandHandler("perevod", perevod, pass_chat_data=True))
     dp.add_handler(CommandHandler("kartinka", kartinka, pass_chat_data=True))
+    dp.add_handler(CommandHandler("set_timer", set_timer, pass_chat_data=True))
+    dp.add_handler(CommandHandler("unset_timer", unset_timer, pass_chat_data=True))
     dp.add_handler(CommandHandler("info", info, pass_chat_data=True))
-    dp.add_handler(CommandHandler("urawn", urawn, pass_args=True))
+    dp.add_handler(CommandHandler("urawn", urawn, pass_chat_data=True))
     # Запускаем цикл приема и обработки сообщений.
     updater.start_polling()
     # Ждём завершения приложения.
