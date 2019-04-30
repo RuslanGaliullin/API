@@ -53,6 +53,9 @@ class Helper:
         return None
 
 
+helpp = Helper()
+
+
 def start(bot, update):
     update.message.reply_text("Привет! Я бот помощник для учебы. Список команд доступен по /help",
                               reply_markup=markup)
@@ -219,7 +222,8 @@ def priem(bot, update, chat_data, job_queue):
                         "text": ' '.join(words)
                     })
                 update.message.reply_text(
-                    " ".join(response.json()["text"]))
+                    " ".join(response.json()[
+                                 "text"] + '\nПереведено сервисом «Яндекс.Переводчик» http://translate.yandex.ru/.'))
             else:
                 update.message.reply_text('Я не знаю такого языка: {}'.format(to_trans))
         else:
